@@ -1,10 +1,10 @@
 === Photo Block - A Modern Image Block With Lightbox and Caption Support ===
 Contributors: ronalfy
 Tags: image block, image lightbox, captions, images, responsive image
-Requires at least: 6.8
-Tested up to: 6.9
-Stable tag: 1.7.1
-Requires PHP: 7.2
+Requires at least: 6.9
+Tested up to: 7.1
+Stable tag: 1.8.0
+Requires PHP: 8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://github.com/sponsors/DLXPlugins
