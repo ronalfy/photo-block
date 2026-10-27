@@ -48,16 +48,25 @@ class Options {
 	 * @return string|array|bool Return a string if key is set, array of options (default), or false if key is set and option is not found.
 	 */
 	public static function get_options( $force = false, $key = '' ) {
-		$options = self::$options;
+		$options        = self::$options;
+		$stored_options = null;
 		if ( ! is_array( $options ) || empty( $options ) || true === $force ) {
-			$options = get_option( self::$options_key, array() );
+			$stored_options = get_option( self::$options_key, array() );
+			$options        = $stored_options;
 		}
 		if ( false === $options || empty( $options ) ) {
 			$options = self::get_defaults();
 		} else {
 			$options = wp_parse_args( $options, self::get_defaults() );
 		}
-		$options       = Functions::sanitize_array_recursive( $options );
+		$options = self::remove_retired_options( $options );
+		$options = Functions::sanitize_array_recursive( $options );
+
+		// Drop stored ScreenshotOne credentials the first time options are read after removal.
+		if ( is_array( $stored_options ) && self::has_retired_options( $stored_options ) ) {
+			update_option( self::$options_key, $options );
+		}
+
 		self::$options = $options;
 
 		// Return a key if set.
@@ -85,6 +94,7 @@ class Options {
 
 		// Get into option format.
 		$options = Functions::sanitize_array_recursive( $options );
+		$options = self::remove_retired_options( $options );
 
 		// Get current options.
 		$current_options = self::get_options();
@@ -121,26 +131,9 @@ class Options {
 	 */
 	public static function get_defaults() {
 		$defaults = array(
-			'hideCaptionAppender'                    => false,
-			'insertOnPaste'                          => false,
-			'screenshotOneEnabled'                   => false,
-			'screenshotOneAccessKey'                 => '',
-			'screenshotOneSecretKey'                 => '',
-			'screenshotOneAPIValid'                  => false,
-			'screenshotOneEnableSignedRequests'      => false,
-			'screenshotOneDefaultImageFormat'        => 'jpg',
-			'screenshotOneEnableAnimatedScreenshots' => false,
-			'screenshotOneTotalLimit'                => 0,
-			'screenshotOneAvailableRequests'         => 0,
-			'screenshotOneUsedRequests'              => 0,
-			'screenshotOneMaxImageWidth'             => 1400,
-			'screenshotOneMaxImageHeight'            => 1200,
-			'screenshotOneViewportWidth'             => 1400,
-			'screenshotOneViewportHeight'            => 1200,
-			'screenshotOneBlockCookieBanners'        => true,
-			'screenshotOneBlockAds'                  => true,
-			'screenshotOneIgnoreHostErrors'          => false,
-			'debugModeEnabled'                       => false,
+			'hideCaptionAppender' => false,
+			'insertOnPaste'       => false,
+			'debugModeEnabled'    => false,
 		);
 
 		/**
@@ -155,5 +148,65 @@ class Options {
 		$defaults = Functions::sanitize_array_recursive( $defaults );
 
 		return $defaults;
+	}
+
+	/**
+	 * Option keys retired when ScreenshotOne was removed.
+	 *
+	 * @return string[] Option keys.
+	 */
+	private static function get_retired_option_keys() {
+		return array(
+			'screenshotOneEnabled',
+			'screenshotOneAccessKey',
+			'screenshotOneSecretKey',
+			'screenshotOneAPIValid',
+			'screenshotOneEnableSignedRequests',
+			'screenshotOneDefaultImageFormat',
+			'screenshotOneEnableAnimatedScreenshots',
+			'screenshotOneTotalLimit',
+			'screenshotOneAvailableRequests',
+			'screenshotOneUsedRequests',
+			'screenshotOneMaxImageWidth',
+			'screenshotOneMaxImageHeight',
+			'screenshotOneViewportWidth',
+			'screenshotOneViewportHeight',
+			'screenshotOneBlockCookieBanners',
+			'screenshotOneBlockAds',
+			'screenshotOneIgnoreHostErrors',
+		);
+	}
+
+	/**
+	 * Whether stored options still contain retired ScreenshotOne values.
+	 *
+	 * @param array $options Stored options.
+	 *
+	 * @return bool True when a retired key is present.
+	 */
+	private static function has_retired_options( $options ) {
+		foreach ( self::get_retired_option_keys() as $key ) {
+			if ( array_key_exists( $key, $options ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Remove retired ScreenshotOne options, including stored API credentials.
+	 *
+	 * @param array $options Plugin options.
+	 *
+	 * @return array Options without retired keys.
+	 */
+	private static function remove_retired_options( $options ) {
+		if ( ! is_array( $options ) ) {
+			return array();
+		}
+		foreach ( self::get_retired_option_keys() as $key ) {
+			unset( $options[ $key ] );
+		}
+		return $options;
 	}
 }

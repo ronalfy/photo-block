@@ -230,10 +230,6 @@ class Blocks {
 		// Get options.
 		$options = Options::get_options();
 
-		// Strip out access and secret keys.
-		unset( $options['screenshotOneAccessKey'] );
-		unset( $options['screenshotOneSecretKey'] );
-
 		// Get localised vars to return for JS parsing.
 		$localized_vars = array(
 			'restUrl'                 => rest_url( 'dlxplugins/photo-block/v1' ),

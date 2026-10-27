@@ -34,8 +34,6 @@ import { blockStore } from '../../store';
 import SendCommand from '../../utils/SendCommand';
 
 import WPNotice from '../../components/Notice';
-import settingsStore from '../../store/settings';
-import ScreenshotOneMark from '../Icons/ScreenshotOneMark';
 
 /**
  * UploadTypes component.
@@ -51,10 +49,6 @@ const UploadTypes = ( props ) => {
 		setPhotoMode,
 		setScreen,
 	} = useDispatch( blockStore( blockUniqueId ) );
-
-	const {
-		isScreenshotOneEnabled,
-	} = useSelect( settingsStore );
 
 	const {
 		insertBlock,
@@ -381,17 +375,6 @@ const UploadTypes = ( props ) => {
 					name="dlx-photo-block.upload-types"
 					fillProps={ { ...props } }
 				/>
-				{ ( isScreenshotOneEnabled() ) && (
-					<Button
-						variant="secondary"
-						icon={ <ScreenshotOneMark width={ 24 } height={ 24 } /> }
-						onClick={ () => {
-							setScreen( 'screenshotOne' );
-						} }
-					>
-						{ __( 'ScreenshotOne', 'photo-block' ) }
-					</Button>
-				) }
 			</div>
 		</>
 	);

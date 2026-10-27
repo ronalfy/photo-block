@@ -28,7 +28,7 @@ Photo Block was designed for anyone who needs a better way to display images, su
 
 === Key Features ===
 * **Easy and Flexible Uploading**
- Upload directly, choose from the Media Library, or import via a URL. Supports external image sources, such as **ScreenshotOne**, for automatic screenshots. Every image uploads quickly and previews instantly.
+ Upload directly, choose from the Media Library, or import via a URL. Every image uploads quickly and previews instantly.
 * **Smart Cropping and Custom Ratios**
 Define image proportions with built-in ratio presets or enter your own. The smart cropper respects hard crops and presets, such as a known aspect ratio, or you can perform a completely custom crop.
 * **Responsive Image Settings**
@@ -75,7 +75,7 @@ Photo Block adapts to virtually any WordPress design scenario, offering both cre
 
 === Technical Highlights ===
 
-* **Uploader**: Media Library, drag-and-drop, remote URL uploads, and ScreenshotOne support.
+* **Uploader**: Media Library, drag-and-drop, and remote URL uploads.
 * **Cropping**: Smart cropper with presets or custom aspect ratios.
 * **Responsive Controls**: Device-specific padding, margin, and border adjustments.
 * **Sizing Options**: Adjustable width, max width, height, max height, and object-fit per device.
@@ -207,7 +207,7 @@ Please report security bugs found in the source code of the undefined plugin thr
 1. Example image, showcasing an overlay multi-line caption, padding, and dropshadow.
 2. Example image within content, showcasing a bottom caption and dropshadow.
 3. Exaxmple image with overlay caption, CSS Gram filter, and dropshadow.
-4. Upload using the drop-in uploader, Media Library, by URL, or take a screenshot using ScreenshotOne.
+4. Upload using the drop-in uploader, Media Library, or by URL.
 5. Set the link source, linking to a URL, pop the image in a lightbox, or a custom URL.
 6. Global Styles allow you to save your design settings and easily apply them to other photo blocks.
 7. Adjust the image's opacity, add blur, and add a dropshadow.
@@ -217,7 +217,6 @@ Please report security bugs found in the source code of the undefined plugin thr
 11. Set the caption's typography, background color, and text color.
 12. Set the overlay color, whether it shows on hover, and set the overlay background type (None, Solid, Gradient, or Image).
 13. An intuitive cropper allows you to crop by preset aspect ratio such as 16:9, or select a custom aspect ratio.
-14. Take a website screenshot using the ScreenshotOne service, which is integrated right with Photo Block.
 
 == Changelog ==
 

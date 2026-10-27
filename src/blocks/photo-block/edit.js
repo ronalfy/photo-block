@@ -16,7 +16,6 @@ import {
 import { blockStore } from '../../store';
 
 import InitialScreen from '../../screens/Initial';
-import ScreenshotOne from '../../screens/ScreenshotOne';
 //import EffectsScreen from '../../screens/Effects';
 import CaptionAppender from '../../components/CaptionAppender';
 import EditScreen from '../../screens/Edit';
@@ -294,8 +293,6 @@ const PhotoBlock = ( props ) => {
 				return <CropScreen attributes={ attributes } setAttributes={ setAttributes } blockUniqueId={ blockUniqueId } />;
 			case 'featuredImage':
 				return <FeaturedImageScreen attributes={ attributes } setAttributes={ setAttributes } context={ context } innerBlockProps={ captionInnerBlockProps } blockUniqueId={ blockUniqueId } clientId={ clientId } />;
-			case 'screenshotOne':
-				return <ScreenshotOne attributes={ attributes } setAttributes={ setAttributes } blockUniqueId={ blockUniqueId } clientId={ clientId } />;
 			case 'effects':
 				return null;
 				// return (

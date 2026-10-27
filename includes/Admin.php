@@ -43,12 +43,6 @@ class Admin {
 		// Enqueue scripts for the admin page.
 		add_action( 'admin_enqueue_scripts', array( self::get_instance(), 'enqueue_scripts' ) );
 
-		// Ajax for saving the ScreenshotOne API key.
-		add_action( 'wp_ajax_dlx_pb_save_screenshot_one_api_key', array( self::get_instance(), 'ajax_save_screenshot_one_api_key' ) );
-
-		// Ajax for revoking the ScreenshotOne API key.
-		add_action( 'wp_ajax_dlx_pb_revoke_screenshot_one_api_key', array( self::get_instance(), 'ajax_revoke_screenshot_one_api_key' ) );
-
 		// For saving the options.
 		add_action( 'wp_ajax_dlx_pb_save_options', array( self::get_instance(), 'ajax_save_options' ) );
 
@@ -231,31 +225,13 @@ class Admin {
 			'dlx-pb-admin',
 			'dlxPBAdmin',
 			array(
-				'getNonce'                               => wp_create_nonce( 'dlx-pb-admin-get-options' ),
-				'saveNonce'                              => wp_create_nonce( 'dlx-pb-admin-save-options' ),
-				'resetNonce'                             => wp_create_nonce( 'dlx-pb-admin-reset-options' ),
-				'restNonce'                              => wp_create_nonce( 'wp_rest' ),
-				'savescreenshotOneAccessKeyNonce'        => wp_create_nonce( 'dlx-pb-admin-save-screenshot-one-api-key' ),
-				'revokescreenshotOneAccessKeyNonce'      => wp_create_nonce( 'dlx-pb-admin-revoke-screenshot-one-api-key' ),
-				'hideCaptionAppender'                    => (bool) $options['hideCaptionAppender'],
-				'insertOnPaste'                          => (bool) $options['insertOnPaste'],
-				'screenshotOneEnabled'                   => (bool) $options['screenshotOneEnabled'],
-				'screenshotOneAccessKey'                 => $options['screenshotOneAccessKey'],
-				'screenshotOneSecretKey'                 => $options['screenshotOneSecretKey'],
-				'screenshotOneAPIValid'                  => $options['screenshotOneAPIValid'],
-				'screenshotOneDefaultImageFormat'        => $options['screenshotOneDefaultImageFormat'],
-				'screenshotOneEnableAnimatedScreenshots' => $options['screenshotOneEnableAnimatedScreenshots'],
-				'screenshotOneTotalLimit'                => $options['screenshotOneTotalLimit'],
-				'screenshotOneAvailableRequests'         => $options['screenshotOneAvailableRequests'],
-				'screenshotOneUsedRequests'              => $options['screenshotOneUsedRequests'],
-				'screenshotOneMaxImageWidth'             => $options['screenshotOneMaxImageWidth'],
-				'screenshotOneMaxImageHeight'            => $options['screenshotOneMaxImageHeight'],
-				'screenshotOneViewportWidth'             => $options['screenshotOneViewportWidth'],
-				'screenshotOneViewportHeight'            => $options['screenshotOneViewportHeight'],
-				'screenshotOneBlockCookieBanners'        => $options['screenshotOneBlockCookieBanners'],
-				'screenshotOneBlockAds'                  => $options['screenshotOneBlockAds'],
-				'screenshotOneIgnoreHostErrors'          => $options['screenshotOneIgnoreHostErrors'],
-				'debugModeEnabled'                       => $options['debugModeEnabled'],
+				'getNonce'            => wp_create_nonce( 'dlx-pb-admin-get-options' ),
+				'saveNonce'           => wp_create_nonce( 'dlx-pb-admin-save-options' ),
+				'resetNonce'          => wp_create_nonce( 'dlx-pb-admin-reset-options' ),
+				'restNonce'           => wp_create_nonce( 'wp_rest' ),
+				'hideCaptionAppender' => (bool) $options['hideCaptionAppender'],
+				'insertOnPaste'       => (bool) $options['insertOnPaste'],
+				'debugModeEnabled'    => $options['debugModeEnabled'],
 			)
 		);
 		\wp_set_script_translations( 'dlx-pb-admin', 'photo-block' );
@@ -298,77 +274,5 @@ class Admin {
 			</main>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Save the ScreenshotOne API key.
-	 */
-	public function ajax_save_screenshot_one_api_key() {
-		// Get form data.
-		$nonce = sanitize_text_field( filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_SPECIAL_CHARS ) );
-
-		// Verify nonce.
-		if ( ! wp_verify_nonce( $nonce, 'dlx-pb-admin-save-screenshot-one-api-key' ) || ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Nonce or permission verification failed.', 'photo-block' ) );
-		}
-
-		// Get the API key.
-		$api_key    = sanitize_text_field( filter_input( INPUT_POST, 'apiKey', FILTER_SANITIZE_SPECIAL_CHARS ) );
-		$secret_key = sanitize_text_field( filter_input( INPUT_POST, 'secretKey', FILTER_SANITIZE_SPECIAL_CHARS ) );
-
-		$screenshot_one_api = new ScreenshotOne_API( $api_key, $secret_key );
-		$usage              = $screenshot_one_api->get_api_usage();
-		if ( is_wp_error( $usage ) ) {
-			wp_send_json_error( $usage->get_error_message() );
-		}
-
-		$options                                   = Options::get_options();
-		$options['screenshotOneAccessKey']         = $api_key;
-		$options['screenshotOneSecretKey']         = $secret_key;
-		$options['screenshotOneEnabled']           = true;
-		$options['screenshotOneAPIValid']          = true;
-		$options['screenshotOneTotalLimit']        = absint( $usage['total'] );
-		$options['screenshotOneAvailableRequests'] = absint( $usage['available'] );
-		$options['screenshotOneUsedRequests']      = absint( $usage['used'] );
-
-		// Save the API key.
-		Options::update_options( $options );
-
-		wp_send_json_success(
-			array(
-				'screenshotOneAPIValid'          => true,
-				'screenshotOneTotalLimit'        => $options['screenshotOneTotalLimit'],
-				'screenshotOneAvailableRequests' => $options['screenshotOneAvailableRequests'],
-				'screenshotOneUsedRequests'      => $options['screenshotOneUsedRequests'],
-			)
-		);
-	}
-
-	/**
-	 * Revoke the ScreenshotOne API key.
-	 */
-	public function ajax_revoke_screenshot_one_api_key() {
-		// Get nonce.
-		$nonce = sanitize_text_field( filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_SPECIAL_CHARS ) );
-
-		// Verify nonce.
-		if ( ! wp_verify_nonce( $nonce, 'dlx-pb-admin-revoke-screenshot-one-api-key' ) || ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Nonce or permission verification failed.', 'photo-block' ) );
-		}
-
-		// Get options.
-		$options = Options::get_options();
-
-		// Reset options.
-		$options['screenshotOneAPIValid']          = false;
-		$options['screenshotOneAccessKey']         = '';
-		$options['screenshotOneSecretKey']         = '';
-		$options['screenshotOneTotalLimit']        = 0;
-		$options['screenshotOneAvailableRequests'] = 0;
-
-		// Update options.
-		Options::update_options( $options );
-
-		wp_send_json_success();
 	}
 }

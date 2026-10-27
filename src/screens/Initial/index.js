@@ -1,18 +1,16 @@
 /**
  * This is the initial screen of the block. It is the first screen that the user sees when they add the block to the editor.
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import {
 	InspectorControls,
 } from '@wordpress/block-editor';
 import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import UploadTypes from '../../components/UploadTypes';
 import UploadTarget from '../../components/UploadTarget';
 import UploadStatus from '../../components/UploadStatus';
 import { blockStore } from '../../store';
-import ScreenshotOneContext from '../../contexts/ScreenshotOne';
 
 /**
  * InitialScreen component.
@@ -33,8 +31,6 @@ const InitialScreen = ( props ) => {
 			isUploadError: select( blockStore( blockUniqueId ) ).isUploadError(),
 		};
 	} );
-
-	const [ isScreenshotOneTypeSelected, setIsScreenshotOneTypeSelected ] = useState( false );
 
 	useEffect( () => {
 		if ( props.attributes.loadFile && photoBlock.settings.insertOnPaste ) {
@@ -77,31 +73,6 @@ const InitialScreen = ( props ) => {
 		</>
 	);
 
-	const screenshotOneInterface = (
-		<>
-			<div className="dlx-photo-block__screen-initial">
-				{ __( 'ScreenshotOne', 'photo-block' ) }
-			</div>
-		</>
-	);
-
-	return (
-		<ScreenshotOneContext.Provider value={ { isScreenshotOneTypeSelected, setIsScreenshotOneTypeSelected } }>
-			{
-				! isScreenshotOneTypeSelected && (
-					<>
-						{ initialDefaultInterface }
-					</>
-				)
-			}
-			{
-				isScreenshotOneTypeSelected && (
-					<>
-						{ screenshotOneInterface }
-					</>
-				)
-			}
-		</ScreenshotOneContext.Provider>
-	);
+	return initialDefaultInterface;
 };
 export default InitialScreen;

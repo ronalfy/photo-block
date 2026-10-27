@@ -2,20 +2,6 @@
 import { createReduxStore, register } from '@wordpress/data';
 const DEFAULT_STATE = {
 	hideCaptionAppender: photoBlock.settings.hideCaptionAppender,
-	screenshotOneEnabled: photoBlock.settings.screenshotOneEnabled,
-	screenshotOneAPIValid: photoBlock.settings.screenshotOneAPIValid,
-	screenshotOneEnableSignedRequests: photoBlock.settings.screenshotOneEnableSignedRequests,
-	screenshotOneDefaultImageFormat: photoBlock.settings.screenshotOneDefaultImageFormat,
-	screenshotOneEnableAnimatedScreenshots: photoBlock.settings.screenshotOneEnableAnimatedScreenshots,
-	screenshotOneTotalLimit: photoBlock.settings.screenshotOneTotalLimit,
-	screenshotOneAvailableRequests: photoBlock.settings.screenshotOneAvailableRequests,
-	screenshotOneMaxImageWidth: photoBlock.settings.screenshotOneMaxImageWidth,
-	screenshotOneMaxImageHeight: photoBlock.settings.screenshotOneMaxImageHeight,
-	screenshotOneViewportWidth: photoBlock.settings.screenshotOneViewportWidth,
-	screenshotOneViewportHeight: photoBlock.settings.screenshotOneViewportHeight,
-	screenshotOneBlockCookieBanners: photoBlock.settings.screenshotOneBlockCookieBanners,
-	screenshotOneBlockAds: photoBlock.settings.screenshotOneBlockAds,
-	screenshotOneIgnoreHostErrors: photoBlock.settings.screenshotOneIgnoreHostErrors,
 };
 const actions = {
 	/**
@@ -67,15 +53,6 @@ const settingsStore = createReduxStore( 'dlxplugins/photo-block/settings', {
 				return state[ key ];
 			}
 			return null;
-		},
-		/**
-		 * Check if screenshot one is enabled by checking if the API is valid and the setting is enabled.
-		 *
-		 * @param {Object} state The current state of the settings store.
-		 * @return {boolean} True if screenshot one is enabled, false otherwise.
-		 */
-		isScreenshotOneEnabled( state ) {
-			return state.screenshotOneAPIValid && state.screenshotOneEnabled;
 		},
 	},
 } );
